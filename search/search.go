@@ -11,7 +11,9 @@ func TraverseFiles() ([]string, error) {
 
 	fileList := make([]string, 0)
 	e := filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
-		fileList = append(fileList, path)
+		if f.Mode().IsRegular() {
+			fileList = append(fileList, path)
+		}
 		return err
 	})
 
