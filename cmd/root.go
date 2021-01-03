@@ -17,7 +17,11 @@ var rootCmd = &cobra.Command{
 issue for each TODO in the associated GitHub repository.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		search.TraverseFiles()
+		todos, err := search.GetTodos(".")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(todos)
 	},
 }
 
