@@ -12,7 +12,7 @@ type Option struct {
 	Run    func()
 }
 
-func Execute(todos []Todo) {
+func Execute(todos []Todo) error {
 	options := []Option{
 		{Option: "Open Issue", Run: open},
 		{Option: "Skip Issue", Run: skip},
@@ -20,23 +20,32 @@ func Execute(todos []Todo) {
 	}
 
 	for _, todo := range todos {
-		i := createPrompt(options, todo)
+		i, err := createPrompt(options, todo)
+		if err != nil {
+			return err
+		}
+
 		options[i].Run()
 		if options[i].Option == options[len(options)-1].Option {
 			break
 		}
 	}
+
+	return nil
 }
 
-func createPrompt(options []Option, todo Todo) int {
+func createPrompt(options []Option, todo Todo) (int, error) {
 	templates := &promptui.SelectTemplates{
 		Label:    "",
 		Active:   "\U00001433 {{ .Option }}",
 		Inactive: "  {{ .Option | faint }}",
 	}
 
+	todoText := fmt.Sprintf("Issue: %s -- %s:%d",
+		todo.Todo, todo.Filepath, todo.LineNum)
+
 	prompt := promptui.Select{
-		Label:        "",
+		Label:        todoText,
 		Items:        options,
 		Templates:    templates,
 		Size:         4,
@@ -47,10 +56,10 @@ func createPrompt(options []Option, todo Todo) int {
 	i, _, err := prompt.Run()
 
 	if err != nil {
-		panic(err)
+		return -1, err
 	}
 
-	return i
+	return i, nil
 }
 
 func open() {
@@ -62,5 +71,5 @@ func skip() {
 }
 
 func exit() {
-	fmt.Println("Exit program.")
+	fmt.Println("Exiting program.")
 }

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/rkabani19/ti/prompt"
@@ -21,10 +22,13 @@ issue for each TODO in the associated GitHub repository.`,
 		fmt.Println("Searching all files for TODO comments...")
 		todos, err := search.GetTodos(".")
 		if err != nil {
-			panic(err)
+			log.Fatalln("Unable to get todos.")
 		}
 
-		prompt.Execute(todos)
+		err = prompt.Execute(todos)
+		if err != nil {
+			log.Fatalln("Unable to create issues.")
+		}
 	},
 }
 
