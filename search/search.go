@@ -5,13 +5,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-)
 
-type Todo struct {
-	lineNum  int
-	filepath string
-	todo     string
-}
+	. "github.com/rkabani19/ti/todo"
+)
 
 const (
 	// TODO: Support diff file types
@@ -37,9 +33,9 @@ func GetTodos(startDir string) ([]Todo, error) {
 			todo := getTodo(scanner.Text())
 			if todo != "" {
 				todos = append(todos, Todo{
-					lineNum:  line,
-					filepath: fp,
-					todo:     todo,
+					LineNum:  line,
+					Filepath: fp,
+					Todo:     todo,
 				})
 			}
 			line++

@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
+	"github.com/rkabani19/ti/prompt"
 	"github.com/rkabani19/ti/search"
 	"github.com/spf13/cobra"
 )
@@ -17,11 +19,16 @@ var rootCmd = &cobra.Command{
 issue for each TODO in the associated GitHub repository.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Searching all files for TODO comments...")
 		todos, err := search.GetTodos(".")
 		if err != nil {
-			panic(err)
+			log.Fatalln("Unable to get todos.")
 		}
-		fmt.Println(todos)
+
+		err = prompt.Execute(todos)
+		if err != nil {
+			log.Fatalln("Unable to create issues.")
+		}
 	},
 }
 
