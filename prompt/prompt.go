@@ -23,7 +23,7 @@ func Execute(todos []Todo, pat string) error {
 		{Option: "Exit", Run: exit},
 	}
 
-	repo, owner, err := getConfig()
+	owner, repo, err := getConfig()
 	if err != nil {
 		return err
 	}
