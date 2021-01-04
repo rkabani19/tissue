@@ -46,7 +46,7 @@ func Execute(todos []Todo, pat string) error {
 func createPrompt(options []Option, todo Todo) (int, error) {
 	templates := &promptui.SelectTemplates{
 		Label:    "",
-		Active:   "\U00001433 {{ .Option }}",
+		Active:   "\U000027A4 {{ .Option }}",
 		Inactive: "  {{ .Option | faint }}",
 	}
 
@@ -79,7 +79,7 @@ func skip(todo Todo, pat string, owner string, repo string) {
 }
 
 func exit(todo Todo, pat string, owner string, repo string) {
-	fmt.Println("Exiting program.")
+	fmt.Println("Exiting.")
 }
 
 func getConfig() (string, string, error) {
