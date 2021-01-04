@@ -23,9 +23,8 @@ issue for each TODO in the associated GitHub repository.`,
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(todos)
 
-		prompt.Execute()
+		prompt.Execute(todos)
 	},
 }
 
