@@ -25,7 +25,7 @@ issue for each TODO in the associated GitHub repository.`,
 			log.Fatalln("Unable to get todos.")
 		}
 
-		err = prompt.Execute(todos)
+		err = prompt.Execute(todos, args[0])
 		if err != nil {
 			log.Fatalln("Unable to create issues.")
 		}
