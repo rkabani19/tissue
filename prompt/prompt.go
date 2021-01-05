@@ -17,12 +17,6 @@ type Option struct {
 	Run    func(Todo, string, string, string)
 }
 
-type Label struct {
-	Title  string
-	Number int
-	Todo   Todo
-}
-
 func Execute(todos []Todo, pat string) error {
 	// TODO: create an edit option
 	options := []Option{
@@ -52,7 +46,11 @@ func Execute(todos []Todo, pat string) error {
 }
 
 func createPrompt(options []Option, num int, todo Todo) (int, error) {
-	todoText := Label{
+	todoText := struct {
+		Title  string
+		Number int
+		Todo   Todo
+	}{
 		Title:  "Issue",
 		Number: num,
 		Todo:   todo,
@@ -83,7 +81,8 @@ func createPrompt(options []Option, num int, todo Todo) (int, error) {
 }
 
 func open(todo Todo, pat string, owner string, repo string) {
-	issue.Create(todo, pat, owner, repo)
+	is := issue.NewIssueService(pat, owner, repo)
+	issue.Create(todo, is)
 }
 
 func skip(todo Todo, pat string, owner string, repo string) {
