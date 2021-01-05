@@ -18,10 +18,8 @@ type Option struct {
 }
 
 type Label struct {
-	Title    string
-	Todo     string
-	Filepath string
-	LineNum  int
+	Title string
+	Todo  Todo
 }
 
 func Execute(todos []Todo, pat string) error {
@@ -54,14 +52,12 @@ func Execute(todos []Todo, pat string) error {
 
 func createPrompt(options []Option, todo Todo) (int, error) {
 	todoText := Label{
-		Title:    "Issue",
-		Todo:     todo.Todo,
-		Filepath: todo.Filepath,
-		LineNum:  todo.LineNum,
+		Title: "Issue",
+		Todo:  todo,
 	}
 
 	templates := &promptui.SelectTemplates{
-		Label:    "{{ .Title | cyan | bold }}: {{ .Todo }} {{ .Filepath | faint}}:{{ .LineNum | faint }}",
+		Label:    "{{ .Title | cyan | bold }}: {{ .Todo.Todo }} {{ .Todo.Filepath | faint}}:{{ .Todo.LineNum | faint }}",
 		Active:   "\U000027A4 {{ .Option }}",
 		Inactive: "  {{ .Option | faint }}",
 	}
