@@ -3,7 +3,7 @@ module github.com/rkabani19/ti
 go 1.14
 
 require (
-	github.com/fatih/color v1.10.0 // indirect
+	github.com/fatih/color v1.10.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0

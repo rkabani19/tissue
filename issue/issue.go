@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/go-github/github"
+	"github.com/rkabani19/ti/message"
 	"github.com/rkabani19/ti/todo"
 	"golang.org/x/oauth2"
 )
@@ -15,7 +16,7 @@ func Create(todo todo.Todo, pat string, repoOwner string, repo string) {
 	ctx, client := authenticate(pat)
 	body := fmt.Sprintf("%s:%d", todo.Filepath, todo.LineNum)
 
-	issue, resp, err := client.Issues.Create(
+	issue, _, err := client.Issues.Create(
 		ctx, repoOwner, repo, &github.IssueRequest{
 			Title:  &todo.Todo,
 			Body:   &body,
@@ -23,11 +24,12 @@ func Create(todo todo.Todo, pat string, repoOwner string, repo string) {
 		})
 
 	if err != nil {
+		fmt.Println(message.Error("Unable to create issue."))
 		panic(err)
 	}
 
-	fmt.Println(issue)
-	fmt.Println(resp)
+	successMsg := fmt.Sprintf("Opened issue #%d: %s", *issue.Number, *issue.Title)
+	fmt.Println(message.Success(successMsg))
 }
 
 func authenticate(pat string) (context.Context, *github.Client) {

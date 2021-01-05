@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
+	"github.com/rkabani19/ti/message"
 	"github.com/rkabani19/ti/prompt"
 	"github.com/rkabani19/ti/search"
 	"github.com/spf13/cobra"
@@ -24,6 +26,7 @@ issue for each TODO in the associated GitHub repository.`,
 		if err != nil {
 			log.Fatalln("Unable to get todos.")
 		}
+		fmt.Printf("Found %s TODOs\n\n", message.Highlight(strconv.Itoa(len(todos))))
 
 		err = prompt.Execute(todos, args[0])
 		if err != nil {
