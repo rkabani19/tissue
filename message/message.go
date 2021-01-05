@@ -21,3 +21,8 @@ func Warning(str string) string {
 	warning := color.New(color.FgYellow).SprintFunc()
 	return warning(str)
 }
+
+func Faint(str string) string {
+	faint := color.New(color.Faint).SprintFunc()
+	return faint(str)
+}

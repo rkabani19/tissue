@@ -18,8 +18,9 @@ type Option struct {
 }
 
 type Label struct {
-	Title string
-	Todo  Todo
+	Title  string
+	Number int
+	Todo   Todo
 }
 
 func Execute(todos []Todo, pat string) error {
@@ -35,14 +36,14 @@ func Execute(todos []Todo, pat string) error {
 		return err
 	}
 
-	for _, todo := range todos {
-		i, err := createPrompt(options, todo)
+	for i, todo := range todos {
+		j, err := createPrompt(options, i+1, todo)
 		if err != nil {
 			return err
 		}
 
-		options[i].Run(todo, pat, owner, repo)
-		if options[i].Option == options[len(options)-1].Option {
+		options[j].Run(todo, pat, owner, repo)
+		if options[j].Option == options[len(options)-1].Option {
 			break
 		}
 	}
@@ -50,14 +51,15 @@ func Execute(todos []Todo, pat string) error {
 	return nil
 }
 
-func createPrompt(options []Option, todo Todo) (int, error) {
+func createPrompt(options []Option, num int, todo Todo) (int, error) {
 	todoText := Label{
-		Title: "Issue",
-		Todo:  todo,
+		Title:  "Issue",
+		Number: num,
+		Todo:   todo,
 	}
 
 	templates := &promptui.SelectTemplates{
-		Label:    "{{ .Title | cyan | bold }}: {{ .Todo.Todo }} {{ .Todo.Filepath | faint}}:{{ .Todo.LineNum | faint }}",
+		Label:    "{{ .Title | cyan | bold }} {{ .Number }}: {{ .Todo.Todo }} {{ .Todo.Filepath | faint}}:{{ .Todo.LineNum | faint }}",
 		Active:   "\U000027A4 {{ .Option }}",
 		Inactive: "  {{ .Option | faint }}",
 	}
@@ -86,11 +88,11 @@ func open(todo Todo, pat string, owner string, repo string) {
 
 func skip(todo Todo, pat string, owner string, repo string) {
 	fmt.Println(message.Warning(fmt.Sprintf(
-		"Skipped TODO from %s:%d.", todo.Filepath, todo.LineNum)))
+		"Skipped TODO from %s:%d", todo.Filepath, todo.LineNum)))
 }
 
 func exit(todo Todo, pat string, owner string, repo string) {
-	fmt.Println(message.Warning("Exiting."))
+	fmt.Println(message.Warning("Exiting program"))
 }
 
 func getConfig() (string, string, error) {
