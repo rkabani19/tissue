@@ -8,6 +8,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/rkabani19/ti/issue"
+	"github.com/rkabani19/ti/message"
 	. "github.com/rkabani19/ti/todo"
 )
 
@@ -16,7 +17,13 @@ type Option struct {
 	Run    func(Todo, string, string, string)
 }
 
+type Label struct {
+	Title string
+	Todo  Todo
+}
+
 func Execute(todos []Todo, pat string) error {
+	// TODO: create an edit option
 	options := []Option{
 		{Option: "Open Issue", Run: open},
 		{Option: "Skip Issue", Run: skip},
@@ -44,14 +51,16 @@ func Execute(todos []Todo, pat string) error {
 }
 
 func createPrompt(options []Option, todo Todo) (int, error) {
-	templates := &promptui.SelectTemplates{
-		Label:    "",
-		Active:   "\U00001433 {{ .Option }}",
-		Inactive: "  {{ .Option | faint }}",
+	todoText := Label{
+		Title: "Issue",
+		Todo:  todo,
 	}
 
-	todoText := fmt.Sprintf("Issue: %s -- %s:%d",
-		todo.Todo, todo.Filepath, todo.LineNum)
+	templates := &promptui.SelectTemplates{
+		Label:    "{{ .Title | cyan | bold }}: {{ .Todo.Todo }} {{ .Todo.Filepath | faint}}:{{ .Todo.LineNum | faint }}",
+		Active:   "\U000027A4 {{ .Option }}",
+		Inactive: "  {{ .Option | faint }}",
+	}
 
 	prompt := promptui.Select{
 		Label:        todoText,
@@ -76,10 +85,12 @@ func open(todo Todo, pat string, owner string, repo string) {
 }
 
 func skip(todo Todo, pat string, owner string, repo string) {
+	fmt.Println(message.Warning(fmt.Sprintf(
+		"Skipped TODO from %s:%d.", todo.Filepath, todo.LineNum)))
 }
 
 func exit(todo Todo, pat string, owner string, repo string) {
-	fmt.Println("Exiting program.")
+	fmt.Println(message.Warning("Exiting."))
 }
 
 func getConfig() (string, string, error) {

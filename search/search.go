@@ -20,6 +20,7 @@ const (
 func GetTodos(startDir string) ([]Todo, error) {
 	todos := make([]Todo, 0)
 
+	// TODO: make traverseFiles concurrent
 	e := traverseFiles(startDir, func(fp string) error {
 		file, err := os.Open(fp)
 		if err != nil {
