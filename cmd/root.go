@@ -39,7 +39,7 @@ issue for each TODO in the associated GitHub repository.`,
 
 		err = prompt.Execute(todos, args[0])
 		if err != nil {
-			log.Fatalln("Unable to create issues.")
+			log.Fatalln(err)
 		}
 	},
 }
