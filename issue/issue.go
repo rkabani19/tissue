@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/google/go-github/github"
-	"github.com/rkabani19/ti/message"
-	. "github.com/rkabani19/ti/todo"
+	"github.com/rkabani19/tissue/message"
+	. "github.com/rkabani19/tissue/todo"
 	"golang.org/x/oauth2"
 )
 

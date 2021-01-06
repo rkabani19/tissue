@@ -6,16 +6,16 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/rkabani19/ti/message"
-	"github.com/rkabani19/ti/prompt"
-	"github.com/rkabani19/ti/search"
+	"github.com/rkabani19/tissue/message"
+	"github.com/rkabani19/tissue/prompt"
+	"github.com/rkabani19/tissue/search"
 	"github.com/spf13/cobra"
 )
 
 var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "ti",
+	Use:   "tissue",
 	Short: "A tool to allow you to convert TODO's in your code to GitHub issues.",
 	Long: `This tool will find all TODO comments in your code and create a GitHub
 issue for each TODO in the associated GitHub repository.`,
@@ -31,7 +31,7 @@ issue for each TODO in the associated GitHub repository.`,
 		if fstatus, _ := cmd.Flags().GetBool("list"); fstatus {
 			for i, todo := range todos {
 				fmt.Printf("%s %s: %s %s\n",
-					message.Highlight("TODO"), message.Highlight(strconv.Itoa(i)), todo.Todo,
+					message.Highlight("TODO"), message.Highlight(strconv.Itoa(i+1)), todo.Todo,
 					message.Faint(fmt.Sprintf("(%s:%d)", todo.Filepath, todo.LineNum)))
 			}
 			return

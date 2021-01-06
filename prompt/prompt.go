@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/manifoldco/promptui"
-	"github.com/rkabani19/ti/issue"
-	"github.com/rkabani19/ti/message"
-	. "github.com/rkabani19/ti/todo"
+	"github.com/rkabani19/tissue/issue"
+	"github.com/rkabani19/tissue/message"
+	. "github.com/rkabani19/tissue/todo"
 )
 
 type Option struct {
@@ -61,7 +61,7 @@ func createPrompt(options []Option, num int, todo Todo) (int, error) {
 	}
 
 	templates := &promptui.SelectTemplates{
-		Label:    "{{ .Title | cyan | bold }} {{ .Number }}: {{ .Todo.Todo }} {{ .Todo.Filepath | faint}}:{{ .Todo.LineNum | faint }}",
+		Label:    "{{ .Title | cyan | bold }} {{ .Number | cyan | bold }}: {{ .Todo.Todo }} {{ .Todo.Filepath | faint}}:{{ .Todo.LineNum | faint }}",
 		Active:   "\U000027A4 {{ .Option }}",
 		Inactive: "  {{ .Option | faint }}",
 	}

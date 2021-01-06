@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	. "github.com/rkabani19/ti/todo"
+	. "github.com/rkabani19/tissue/todo"
 )
 
 const (

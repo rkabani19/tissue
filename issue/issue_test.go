@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/google/go-github/github"
-	. "github.com/rkabani19/ti/todo"
+	. "github.com/rkabani19/tissue/todo"
 )
 
 var createIssueMock func(Todo) (*github.Issue, *github.Response, error)

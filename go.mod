@@ -1,4 +1,4 @@
-module github.com/rkabani19/ti
+module github.com/rkabani19/tissue
 
 go 1.14
 
