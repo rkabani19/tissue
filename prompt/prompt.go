@@ -14,13 +14,7 @@ import (
 
 type Option struct {
 	Option string
-	Run    func(Todo, string, string, string)
-}
-
-type Label struct {
-	Title  string
-	Number int
-	Todo   Todo
+	Run    func(Todo, string, string, string) error
 }
 
 func Execute(todos []Todo, pat string) error {
@@ -42,7 +36,11 @@ func Execute(todos []Todo, pat string) error {
 			return err
 		}
 
-		options[j].Run(todo, pat, owner, repo)
+		err = options[j].Run(todo, pat, owner, repo)
+		if err != nil {
+			return err
+		}
+
 		if options[j].Option == options[len(options)-1].Option {
 			break
 		}
@@ -52,7 +50,11 @@ func Execute(todos []Todo, pat string) error {
 }
 
 func createPrompt(options []Option, num int, todo Todo) (int, error) {
-	todoText := Label{
+	todoText := struct {
+		Title  string
+		Number int
+		Todo   Todo
+	}{
 		Title:  "Issue",
 		Number: num,
 		Todo:   todo,
@@ -82,17 +84,20 @@ func createPrompt(options []Option, num int, todo Todo) (int, error) {
 	return i, nil
 }
 
-func open(todo Todo, pat string, owner string, repo string) {
-	issue.Create(todo, pat, owner, repo)
+func open(todo Todo, pat string, owner string, repo string) error {
+	is := issue.NewIssueService(pat, owner, repo)
+	return issue.Create(todo, is)
 }
 
-func skip(todo Todo, pat string, owner string, repo string) {
+func skip(todo Todo, pat string, owner string, repo string) error {
 	fmt.Println(message.Warning(fmt.Sprintf(
 		"Skipped TODO from %s:%d", todo.Filepath, todo.LineNum)))
+	return nil
 }
 
-func exit(todo Todo, pat string, owner string, repo string) {
+func exit(todo Todo, pat string, owner string, repo string) error {
 	fmt.Println(message.Warning("Exiting program"))
+	return nil
 }
 
 func getConfig() (string, string, error) {
