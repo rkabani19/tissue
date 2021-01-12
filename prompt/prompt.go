@@ -2,9 +2,6 @@ package prompt
 
 import (
 	"fmt"
-	"log"
-	"os/exec"
-	"strings"
 
 	"github.com/manifoldco/promptui"
 	"github.com/rkabani19/tissue/issue"
@@ -14,7 +11,7 @@ import (
 
 type Option struct {
 	Option string
-	Run    func(Todo, string, string, string) error
+	Run    func(Todo, issue.IssueService) error
 }
 
 func Execute(todos []Todo, pat string) error {
@@ -25,18 +22,17 @@ func Execute(todos []Todo, pat string) error {
 		{Option: "Exit", Run: exit},
 	}
 
-	owner, repo, err := getConfig()
+	is, err := issue.NewIssueService(pat)
 	if err != nil {
 		return err
 	}
-
 	for i, todo := range todos {
 		j, err := createPrompt(options, i+1, todo)
 		if err != nil {
 			return err
 		}
 
-		err = options[j].Run(todo, pat, owner, repo)
+		err = options[j].Run(todo, is)
 		if err != nil {
 			return err
 		}
@@ -84,39 +80,17 @@ func createPrompt(options []Option, num int, todo Todo) (int, error) {
 	return i, nil
 }
 
-func open(todo Todo, pat string, owner string, repo string) error {
-	is := issue.NewIssueService(pat, owner, repo)
+func open(todo Todo, is issue.IssueService) error {
 	return issue.Create(todo, is)
 }
 
-func skip(todo Todo, pat string, owner string, repo string) error {
+func skip(todo Todo, is issue.IssueService) error {
 	fmt.Println(message.Warning(fmt.Sprintf(
 		"Skipped TODO from %s:%d", todo.Filepath, todo.LineNum)))
 	return nil
 }
 
-func exit(todo Todo, pat string, owner string, repo string) error {
+func exit(todo Todo, is issue.IssueService) error {
 	fmt.Println(message.Warning("Exiting program"))
 	return nil
-}
-
-func getConfig() (string, string, error) {
-	cmd := exec.Command("git", "config", "user.name")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalln("This directory has no GitHub user.")
-		return "", "", err
-	}
-	owner := strings.TrimSpace(string(out))
-
-	cmd = exec.Command("git", "remote", "get-url", "origin")
-	out, err = cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalln("This directory has no GitHub remote.")
-		return "", "", err
-	}
-	split := strings.Split(string(out), owner+"/")
-	repo := strings.TrimSpace(split[1][:len(split[1])-5])
-
-	return owner, repo, nil
 }
