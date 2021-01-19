@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	. "github.com/rkabani19/tissue/todo"
 )
@@ -15,12 +16,15 @@ const (
 	todoString = "TODO"
 )
 
+var wg sync.WaitGroup
+
 // GetTodos walks through directory tree from startDir and parses files to
 // extract commented todos and return them
 func GetTodos(startDir string) ([]Todo, error) {
+	mutex := &sync.Mutex{}
 	todos := make([]Todo, 0)
 
-	// TODO: make traverseFiles concurrent
+	wg.Add(1)
 	e := traverseFiles(startDir, func(fp string) error {
 		file, err := os.Open(fp)
 		if err != nil {
@@ -33,11 +37,13 @@ func GetTodos(startDir string) ([]Todo, error) {
 		for scanner.Scan() {
 			todo := getTodo(scanner.Text())
 			if todo != "" {
+				mutex.Lock()
 				todos = append(todos, Todo{
 					LineNum:  line,
 					Filepath: fp,
 					Todo:     todo,
 				})
+				mutex.Unlock()
 			}
 			line++
 		}
@@ -48,6 +54,7 @@ func GetTodos(startDir string) ([]Todo, error) {
 
 		return nil
 	})
+	wg.Wait()
 
 	return todos, e
 }
@@ -72,9 +79,15 @@ func getTodo(line string) (todo string) {
 }
 
 func traverseFiles(searchDir string, f func(fp string) error) error {
+	defer wg.Done()
+
 	e := filepath.Walk(searchDir, func(path string, fi os.FileInfo, err error) error {
 		if fi.Mode().IsRegular() {
 			f(path)
+		} else if fi.IsDir() && path != searchDir {
+			wg.Add(1)
+			go traverseFiles(path, f)
+			return filepath.SkipDir
 		}
 		return err
 	})
