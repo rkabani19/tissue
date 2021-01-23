@@ -12,8 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var cfgFile string
-
 var rootCmd = &cobra.Command{
 	Use:   "tissue",
 	Short: "A tool to allow you to convert TODO's in your code to GitHub issues.",
@@ -27,15 +25,6 @@ issue for each TODO in the associated GitHub repository.`,
 			log.Fatalln("Unable to get todos.")
 		}
 		fmt.Printf("Found %s TODOs\n\n", message.Highlight(strconv.Itoa(len(todos))))
-
-		if fstatus, _ := cmd.Flags().GetBool("list"); fstatus {
-			for i, todo := range todos {
-				fmt.Printf("%s %s: %s %s\n",
-					message.Highlight("TODO"), message.Highlight(strconv.Itoa(i+1)), todo.Todo,
-					message.Faint(fmt.Sprintf("(%s:%d)", todo.Filepath, todo.LineNum)))
-			}
-			return
-		}
 
 		err = prompt.Execute(todos, args[0])
 		if err != nil {
@@ -51,8 +40,4 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func init() {
-	rootCmd.Flags().BoolP("list", "l", false, "list TODOs")
 }
